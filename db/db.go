@@ -2,30 +2,29 @@ package db
 
 import (
 	"database/sql"
-	"flag"
 	"fmt"
+	"github.com/SeraphJACK/v2stat/config"
 	_ "github.com/mattn/go-sqlite3"
 	"os"
 	"path"
 	"time"
 )
 
-var Dir = flag.String("db", "/var/lib/v2stat", "The directory to store traffic data")
 var db *sql.DB
 
 func InitDb() error {
 	// make sure no suffix '/'
-	*Dir = path.Clean(*Dir)
+	Dir := path.Clean(config.Config.DbDir)
 
-	info, err := os.Stat(*Dir)
+	info, err := os.Stat(Dir)
 	if err != nil {
 		return err
 	}
 	if !info.IsDir() {
-		return fmt.Errorf("%s is not a directory", *Dir)
+		return fmt.Errorf("%s is not a directory", Dir)
 	}
 
-	db, err = sql.Open("sqlite3", *Dir+"/v2stat.db?mode=ro")
+	db, err = sql.Open("sqlite3", Dir+"/v2stat.db?mode=ro")
 	if err != nil {
 		return err
 	}
