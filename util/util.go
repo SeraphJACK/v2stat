@@ -4,6 +4,7 @@ import (
 	"context"
 	pb "github.com/SeraphJACK/v2stat/command"
 	"google.golang.org/grpc"
+	"strings"
 	"time"
 )
 
@@ -18,8 +19,7 @@ func QueryStats(addr string, pattern string, reset bool) (*pb.QueryStatsResponse
 }
 
 func ExtractUser(name string) string {
-	// TODO
-	return ""
+	return strings.Split(name, ">>>")[1]
 }
 
 func queryStats(ctx context.Context, conn *grpc.ClientConn, pattern string, reset bool) (*pb.QueryStatsResponse, error) {

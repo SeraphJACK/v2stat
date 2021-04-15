@@ -32,18 +32,24 @@ func main() {
 		records := make(map[string]record)
 
 		for _, v := range res.Stat {
-			if strings.Contains(v.Name, "rx") {
+			// Ignore non-user stat entries
+			if !strings.HasPrefix(v.Name, "user") {
+				// log.Printf("Unrecognized stat entry: %s\n", v.Name)
+				continue
+			}
+			if strings.HasSuffix(v.Name, "downlink") {
 				name := util.ExtractUser(v.Name)
 				rec := records[name]
 				rec.rx = v.Value
 				records[name] = rec
-			} else if strings.Contains(v.Name, "tx") {
+			} else if strings.HasSuffix(v.Name, "uplink") {
 				name := util.ExtractUser(v.Name)
 				rec := records[name]
 				rec.tx = v.Value
 				records[name] = rec
 			} else {
-				log.Printf("Unrecognized stat name: %s\n", v.Name)
+				log.Printf("Unrecognized stat entry: %s\n", v.Name)
+				continue
 			}
 		}
 
