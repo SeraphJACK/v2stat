@@ -12,7 +12,7 @@ import (
 
 var db *sql.DB
 
-func InitDb() error {
+func InitDb(ro bool) error {
 	// make sure no suffix '/'
 	Dir := path.Clean(config.Config.DbDir)
 
@@ -24,7 +24,11 @@ func InitDb() error {
 		return fmt.Errorf("%s is not a directory", Dir)
 	}
 
-	db, err = sql.Open("sqlite3", Dir+"/v2stat.db?mode=ro")
+	if ro {
+		db, err = sql.Open("sqlite3", Dir+"/v2stat.db?mode=ro")
+	} else {
+		db, err = sql.Open("sqlite3", Dir+"/v2stat.db?mode=rw")
+	}
 	if err != nil {
 		return err
 	}

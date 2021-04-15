@@ -71,7 +71,7 @@ func main() {
 		panic(err)
 	}
 
-	err = db.InitDb()
+	err = db.InitDb(false)
 	if err != nil {
 		panic(err)
 	}
