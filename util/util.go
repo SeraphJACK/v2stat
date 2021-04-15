@@ -17,6 +17,11 @@ func QueryStats(addr string, pattern string, reset bool) (*pb.QueryStatsResponse
 	return queryStats(ctx, conn, pattern, reset)
 }
 
+func ExtractUser(name string) string {
+	// TODO
+	return ""
+}
+
 func queryStats(ctx context.Context, conn *grpc.ClientConn, pattern string, reset bool) (*pb.QueryStatsResponse, error) {
 	r := &pb.QueryStatsRequest{
 		Pattern: pattern,
