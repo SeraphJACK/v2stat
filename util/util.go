@@ -11,7 +11,7 @@ import (
 func QueryStats(addr string, pattern string, reset bool) (*pb.QueryStatsResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
-	conn, err := grpc.DialContext(ctx, addr)
+	conn, err := grpc.DialContext(ctx, addr, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		return nil, err
 	}
