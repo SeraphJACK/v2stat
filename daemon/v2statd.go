@@ -105,4 +105,8 @@ func main() {
 	}
 
 	c.Start()
+
+	for true {
+		time.Sleep(time.Hour)
+	}
 }
