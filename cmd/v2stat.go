@@ -28,10 +28,15 @@ func formatTraffic(traffic int64) string {
 
 func printRecords(title string, records []db.Record) {
 	fmt.Printf("Traffics for %s :\n", title)
+	if len(records) == 0 {
+		fmt.Print("    not available\n")
+		return
+	}
 	fmt.Printf("    user / rx / tx\n")
 	for _, v := range records {
-		fmt.Printf("    %s / %s / %s", v.User, formatTraffic(v.Rx), formatTraffic(v.Tx))
+		fmt.Printf("    %s / %s / %s\n", v.User, formatTraffic(v.Rx), formatTraffic(v.Tx))
 	}
+	fmt.Print("\n\n")
 }
 
 func main() {
