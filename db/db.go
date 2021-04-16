@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/SeraphJACK/v2stat/config"
 	_ "github.com/mattn/go-sqlite3"
+	"log"
 	"os"
 	"path"
 	"time"
@@ -62,11 +63,14 @@ func Record(user string, rx int64, tx int64, t time.Time) error {
 func SumDay(t time.Time) error {
 	begin := time.Date(t.Year(), t.Month(), t.Day()-1, 0, 0, 0, 0, t.Location())
 	end := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+	if config.Config.Debug {
+		log.Printf("Doing sum day, now=%s, begin=%s, end=%s\n", t.String(), begin.String(), end.String())
+	}
 	_, err := db.Exec(
-		"INSERT INTO `day`(user, date, rx, tx)\nSELECT `user` as `user`, ? as `date`, sum(`hour`.`rx`) AS `rx`, sum(`hour`.tx) AS tx\nFROM `hour`\nWHERE `hour`.`date` >= ?\n  AND `hour`.`date` <= ?\nGROUP BY `user`\n",
+		"INSERT INTO `day`(user, date, rx, tx)\nSELECT `user` as `user`, ? as `date`, sum(`hour`.`rx`) AS `rx`, sum(`hour`.tx) AS tx\nFROM `hour`\nWHERE `hour`.`date` >= ?\n  AND `hour`.`date` < ?\nGROUP BY `user`\n",
+		begin,
 		begin,
 		end,
-		begin,
 	)
 	return err
 }
@@ -76,11 +80,14 @@ func SumDay(t time.Time) error {
 func SumMonth(t time.Time) error {
 	begin := time.Date(t.Year(), t.Month()-1, 1, 0, 0, 0, 0, t.Location())
 	end := time.Date(t.Year(), t.Month(), 0, 0, 0, 0, 0, t.Location())
+	if config.Config.Debug {
+		log.Printf("Doing sum month, now=%s, begin=%s, end=%s\n", t.String(), begin.String(), end.String())
+	}
 	_, err := db.Exec(
-		"INSERT INTO `day`(user, date, rx, tx)\nSELECT `user` as `user`, ? as `date`, sum(`day`.`rx`) AS `rx`, sum(`day`.tx) AS tx\nFROM `day`\nWHERE `day`.`date` >= ?\n  AND `day`.`date` <= ?\nGROUP BY `user`\n",
+		"INSERT INTO `month`(user, date, rx, tx)\nSELECT `user` as `user`, ? as `date`, sum(`day`.`rx`) AS `rx`, sum(`day`.tx) AS tx\nFROM `day`\nWHERE `day`.`date` >= ?\n  AND `day`.`date` < ?\nGROUP BY `user`\n",
+		begin,
 		begin,
 		end,
-		begin,
 	)
 	return err
 }
