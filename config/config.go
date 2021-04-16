@@ -7,15 +7,21 @@ import (
 )
 
 type Configuration struct {
-	DbDir      string `yaml:"db_dir"`
-	ServerAddr string `yaml:"server_addr"`
-	Debug      bool   `yaml:"debug"`
+	DbDir        string `yaml:"db_dir"`
+	ServerAddr   string `yaml:"server_addr"`
+	DaysToKeep   int    `yaml:"days_to_keep"`
+	MonthsToKeep int    `yaml:"months_to_keep"`
+	YearsToKeep  int    `yaml:"years_to_keep"`
+	Debug        bool   `yaml:"debug"`
 }
 
 var Config = Configuration{
-	DbDir:      "/var/lib/v2stat",
-	ServerAddr: "127.0.0.1:10085",
-	Debug:      false,
+	DbDir:        "/var/lib/v2stat",
+	ServerAddr:   "127.0.0.1:10085",
+	DaysToKeep:   7,
+	MonthsToKeep: 6,
+	YearsToKeep:  2,
+	Debug:        false,
 }
 
 var confPath = flag.String("conf", "/etc/v2stat.yaml", "Path to the config file")

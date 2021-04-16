@@ -193,3 +193,24 @@ func QueryMonth(t time.Time) []Record {
 	}
 	return ret
 }
+
+func CleanHoursRecord(before time.Time) {
+	_, err := db.Exec("DELETE FROM hour WHERE date < ?", before)
+	if err != nil {
+		log.Printf("Failed to clean hour records: %v\n", err)
+	}
+}
+
+func CleanDayRecords(before time.Time) {
+	_, err := db.Exec("DELETE FROM day WHERE date < ?", before)
+	if err != nil {
+		log.Printf("Failed to clean day records: %v\n", err)
+	}
+}
+
+func CleanMonthRecords(before time.Time) {
+	_, err := db.Exec("DELETE FROM month WHERE date < ?", before)
+	if err != nil {
+		log.Printf("Failed to clean month records: %v\n", err)
+	}
+}

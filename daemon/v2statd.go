@@ -16,10 +16,10 @@ type record struct {
 }
 
 func DoRecord() {
-	t := time.Now()
+	now := time.Now()
 
 	if config.Config.Debug {
-		log.Printf("Starting to do record, current time: %s\n", t.String())
+		log.Printf("Starting to do record, current time: %s\n", now.String())
 	}
 
 	res, err := util.QueryStats(config.Config.ServerAddr, "user", true)
@@ -58,11 +58,15 @@ func DoRecord() {
 		if config.Config.Debug {
 			log.Printf("Recording %s: %d %d\n", k, v.rx, v.tx)
 		}
-		err = db.DoRecord(k, v.rx, v.tx, t)
+		err = db.DoRecord(k, v.rx, v.tx, now)
 		if err != nil {
 			log.Printf("Failed to store record into db: %v\n", err)
 		}
 	}
+
+	// Clean hour records
+	before := time.Date(now.Year(), now.Month(), now.Day()-config.Config.DaysToKeep, 0, 0, 0, 0, now.Location())
+	db.CleanHoursRecord(before)
 }
 
 func main() {
@@ -88,20 +92,30 @@ func main() {
 	}
 
 	_, err = c.AddFunc("0 0 * * *", func() {
-		err := db.SumDay(time.Now())
+		now := time.Now()
+		err := db.SumDay(now)
 		if err != nil {
 			log.Printf("Failed to sum day: %v\n", err)
 		}
+
+		// Clean day records
+		before := time.Date(now.Year(), now.Month()-time.Month(config.Config.MonthsToKeep), 1, 0, 0, 0, 0, now.Location())
+		db.CleanDayRecords(before)
 	})
 	if err != nil {
 		panic(err)
 	}
 
 	_, err = c.AddFunc("0 0 1 * *", func() {
-		err := db.SumMonth(time.Now())
+		now := time.Now()
+		err := db.SumMonth(now)
 		if err != nil {
 			log.Printf("Failed to sum month: %v\n", err)
 		}
+
+		// Clean month records
+		before := time.Date(now.Year()-config.Config.YearsToKeep, 1, 1, 0, 0, 0, 0, now.Location())
+		db.CleanMonthRecords(before)
 	})
 	if err != nil {
 		panic(err)
