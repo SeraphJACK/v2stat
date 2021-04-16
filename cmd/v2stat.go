@@ -29,14 +29,22 @@ func formatTraffic(traffic int64) string {
 func printRecords(title string, records []db.Record) {
 	fmt.Printf("Traffics for %s :\n", title)
 	if len(records) == 0 {
-		fmt.Print("    not available\n")
+		fmt.Print("    not available\n\n")
 		return
 	}
 	fmt.Printf("    user / rx / tx\n")
+	sumRx := int64(0)
+	sumTx := int64(0)
 	for _, v := range records {
+		sumRx += v.Rx
+		sumTx += v.Tx
 		fmt.Printf("    %s / %s / %s\n", v.User, formatTraffic(v.Rx), formatTraffic(v.Tx))
 	}
-	fmt.Print("\n\n")
+	fmt.Print("\n")
+
+	fmt.Printf("    Sum rx: %s, tx: %s, total: %s", formatTraffic(sumRx), formatTraffic(sumTx), formatTraffic(sumRx+sumTx))
+
+	fmt.Print("\n")
 }
 
 func main() {
