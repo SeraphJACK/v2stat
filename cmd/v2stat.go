@@ -19,11 +19,12 @@ var units = map[int]string{
 
 func formatTraffic(traffic int64) string {
 	unit := 0
-	for unit <= 3 && traffic >= 1024 {
+	num := float64(traffic)
+	for unit <= 3 && num >= 1024 {
 		unit++
-		traffic /= 1024
+		num /= 1024
 	}
-	return strconv.FormatInt(traffic, 10) + units[unit]
+	return strconv.FormatFloat(num, 'f', 2, 64) + " " + units[unit]
 }
 
 func printRecords(title string, records []db.Record) {
