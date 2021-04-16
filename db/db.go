@@ -79,7 +79,7 @@ func SumDay(t time.Time) error {
 // the time value should be the first day after the month to sum.
 func SumMonth(t time.Time) error {
 	begin := time.Date(t.Year(), t.Month()-1, 1, 0, 0, 0, 0, t.Location())
-	end := time.Date(t.Year(), t.Month(), 0, 0, 0, 0, 0, t.Location())
+	end := time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, t.Location())
 	if config.Config.Debug {
 		log.Printf("Doing sum month, now=%s, begin=%s, end=%s\n", t.String(), begin.String(), end.String())
 	}
