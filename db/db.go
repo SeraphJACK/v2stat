@@ -13,6 +13,12 @@ import (
 
 var db *sql.DB
 
+type Record struct {
+	User string `json:"user"`
+	Rx   int64  `json:"rx"`
+	Tx   int64  `json:"tx"`
+}
+
 func InitDb(ro bool) error {
 	// make sure no suffix '/'
 	Dir := path.Clean(config.Config.DbDir)
@@ -40,9 +46,9 @@ func InitDb(ro bool) error {
 	return nil
 }
 
-// Record should be invoked at the begin of the first minute of an hour in order to account the traffic
+// DoRecord should be invoked at the begin of the first minute of an hour in order to account the traffic
 // during last hour.
-func Record(user string, rx int64, tx int64, t time.Time) error {
+func DoRecord(user string, rx int64, tx int64, t time.Time) error {
 	round := time.Date(t.Year(), t.Month(), t.Day(), t.Hour()-1, 0, 0, 0, t.Location())
 	// Create user record if none
 	_, err := db.Exec("INSERT INTO `user`(`name`) SELECT (?) WHERE NOT EXISTS(SELECT * FROM `user` WHERE `name`=?)", user, user)
@@ -90,4 +96,100 @@ func SumMonth(t time.Time) error {
 		end,
 	)
 	return err
+}
+
+func QueryHourSum(day time.Time) []Record {
+	begin := time.Date(day.Year(), day.Month(), day.Day(), 0, 0, 0, 0, day.Location())
+	end := time.Date(day.Year(), day.Month(), day.Day(), 24, 0, 0, 0, day.Location())
+	ret := make([]Record, 0)
+	rows, err := db.Query(
+		"SELECT u.name, SUM(d.rx), SUM(d.tx)\nFROM user u\n         INNER JOIN hour d ON d.user = u.id\nWHERE d.date >= ?\n  AND d.date < ?\nGROUP BY u.name\n",
+		begin,
+		end,
+	)
+	if err != nil {
+		log.Printf("Failed to query day: %v\n", err)
+		return ret
+	}
+	for rows.Next() {
+		rec := Record{}
+		err := rows.Scan(&rec.User, &rec.Rx, &rec.Tx)
+		if err != nil {
+			log.Printf("Failed to scan day query row: %v\n", err)
+			continue
+		}
+		ret = append(ret, rec)
+	}
+	return ret
+}
+
+func QueryDaySum(month time.Time) []Record {
+	begin := time.Date(month.Year(), month.Month(), 1, 0, 0, 0, 0, month.Location())
+	end := time.Date(month.Year(), month.Month()+1, 1, 24, 0, 0, 0, month.Location())
+	ret := make([]Record, 0)
+	rows, err := db.Query(
+		"SELECT u.name, d.rx, d.tx\nFROM user u\n         INNER JOIN day d ON d.user = u.id\nWHERE d.date >= ?\n  AND d.date < ?\n",
+		begin,
+		end,
+	)
+	if err != nil {
+		log.Printf("Failed to query day: %v\n", err)
+		return ret
+	}
+	for rows.Next() {
+		rec := Record{}
+		err := rows.Scan(&rec.User, &rec.Rx, &rec.Tx)
+		if err != nil {
+			log.Printf("Failed to scan day query row: %v\n", err)
+			continue
+		}
+		ret = append(ret, rec)
+	}
+	return ret
+}
+
+func QueryDay(t time.Time) []Record {
+	begin := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+	ret := make([]Record, 0)
+	rows, err := db.Query(
+		"SELECT u.name, d.rx, d.tx\nFROM user u\n         INNER JOIN day d ON d.user = u.id\nWHERE d.date = ?\n",
+		begin,
+	)
+	if err != nil {
+		log.Printf("Failed to query day: %v\n", err)
+		return ret
+	}
+	for rows.Next() {
+		rec := Record{}
+		err := rows.Scan(&rec.User, &rec.Rx, &rec.Tx)
+		if err != nil {
+			log.Printf("Failed to scan day query row: %v\n", err)
+			continue
+		}
+		ret = append(ret, rec)
+	}
+	return ret
+}
+
+func QueryMonth(t time.Time) []Record {
+	begin := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+	ret := make([]Record, 0)
+	rows, err := db.Query(
+		"SELECT u.name, d.rx, d.tx\nFROM user u\n         INNER JOIN month d ON d.user = u.id\nWHERE d.date = ?\n",
+		begin,
+	)
+	if err != nil {
+		log.Printf("Failed to query day: %v\n", err)
+		return ret
+	}
+	for rows.Next() {
+		rec := Record{}
+		err := rows.Scan(&rec.User, &rec.Rx, &rec.Tx)
+		if err != nil {
+			log.Printf("Failed to scan day query row: %v\n", err)
+			continue
+		}
+		ret = append(ret, rec)
+	}
+	return ret
 }

@@ -58,7 +58,7 @@ func DoRecord() {
 		if config.Config.Debug {
 			log.Printf("Recording %s: %d %d\n", k, v.rx, v.tx)
 		}
-		err = db.Record(k, v.rx, v.tx, t)
+		err = db.DoRecord(k, v.rx, v.tx, t)
 		if err != nil {
 			log.Printf("Failed to store record into db: %v\n", err)
 		}
