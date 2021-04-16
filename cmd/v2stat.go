@@ -15,6 +15,7 @@ var units = map[int]string{
 	1: "KiB",
 	2: "MiB",
 	3: "GiB",
+	4: "TiB",
 }
 
 func formatTraffic(traffic int64) string {
