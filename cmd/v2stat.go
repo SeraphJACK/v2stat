@@ -33,13 +33,13 @@ func printRecords(title string, records []db.Record) {
 		fmt.Print("    not available\n\n")
 		return
 	}
-	fmt.Printf("    user / rx / tx\n")
+	fmt.Printf("    %-15v / %-10v / %-10v\n", "user", "rx", "tx")
 	sumRx := int64(0)
 	sumTx := int64(0)
 	for _, v := range records {
 		sumRx += v.Rx
 		sumTx += v.Tx
-		fmt.Printf("    %s / %s / %s\n", v.User, formatTraffic(v.Rx), formatTraffic(v.Tx))
+		fmt.Printf("    %-15v / %-10v / %-10v\n", v.User, formatTraffic(v.Rx), formatTraffic(v.Tx))
 	}
 	fmt.Print("\n")
 
