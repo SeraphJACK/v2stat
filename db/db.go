@@ -214,3 +214,7 @@ func CleanMonthRecords(before time.Time) {
 		log.Printf("Failed to clean month records: %v\n", err)
 	}
 }
+
+func Close() error {
+	return db.Close()
+}

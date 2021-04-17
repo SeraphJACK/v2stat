@@ -6,7 +6,10 @@ import (
 	"github.com/SeraphJACK/v2stat/util"
 	"github.com/robfig/cron/v3"
 	"log"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -123,7 +126,27 @@ func main() {
 
 	c.Start()
 
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan)
+
 	for true {
-		time.Sleep(time.Hour)
+		sig := <-sigChan
+		if sig == syscall.SIGHUP {
+			log.Printf("Reloading configuration...\n")
+			err := config.LoadConf()
+			if err != nil {
+				log.Printf("Failed to reload configuration: %v\n", err)
+			}
+		} else if sig == syscall.SIGTERM || sig == syscall.SIGINT || sig == syscall.SIGQUIT {
+			// Wait all jobs to terminate
+			<-c.Stop().Done()
+			err := db.Close()
+			if err != nil {
+				log.Printf("Failed to close db connection: %v\n", err)
+			}
+			os.Exit(0)
+		} else if sig == syscall.SIGKILL {
+			os.Exit(1)
+		}
 	}
 }
