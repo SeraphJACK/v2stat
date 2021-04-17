@@ -21,7 +21,7 @@ var units = map[int]string{
 func formatTraffic(traffic int64) string {
 	unit := 0
 	num := float64(traffic)
-	for unit <= 3 && num >= 1024 {
+	for unit <= 3 && num >= 1000 {
 		unit++
 		num /= 1024
 	}
