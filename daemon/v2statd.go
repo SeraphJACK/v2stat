@@ -91,7 +91,7 @@ func main() {
 		panic(err)
 	}
 
-	_, err = c.AddFunc("0 0 * * *", func() {
+	_, err = c.AddFunc("1 0 * * *", func() {
 		now := time.Now()
 		err := db.SumDay(now)
 		if err != nil {
@@ -106,7 +106,7 @@ func main() {
 		panic(err)
 	}
 
-	_, err = c.AddFunc("0 0 1 * *", func() {
+	_, err = c.AddFunc("2 0 1 * *", func() {
 		now := time.Now()
 		err := db.SumMonth(now)
 		if err != nil {
