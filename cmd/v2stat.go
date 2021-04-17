@@ -44,7 +44,7 @@ func printRecords(title string, records []db.Record) {
 	}
 	fmt.Print("\n")
 
-	fmt.Printf("    Sum rx: %s, tx: %s, total: %s", formatTraffic(sumRx), formatTraffic(sumTx), formatTraffic(sumRx+sumTx))
+	fmt.Printf("    Sum rx: %s, tx: %s, total: %s\n", formatTraffic(sumRx), formatTraffic(sumTx), formatTraffic(sumRx+sumTx))
 
 	fmt.Print("\n")
 }
