@@ -83,10 +83,13 @@ func main() {
 		panic(err)
 	}
 
-	_, err = util.QueryStats(config.Config.ServerAddr, "", true)
-	if err != nil {
-		panic(err)
+	if config.Config.ResetOnStart {
+		_, err = util.QueryStats(config.Config.ServerAddr, "", true)
+		if err != nil {
+			panic(err)
+		}
 	}
+
 	c := cron.New()
 
 	_, err = c.AddFunc("0 * * * *", DoRecord)

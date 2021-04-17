@@ -12,6 +12,7 @@ type Configuration struct {
 	DaysToKeep   int    `yaml:"days_to_keep"`
 	MonthsToKeep int    `yaml:"months_to_keep"`
 	YearsToKeep  int    `yaml:"years_to_keep"`
+	ResetOnStart bool   `yaml:"reset_on_start"`
 	Debug        bool   `yaml:"debug"`
 }
 
@@ -21,6 +22,7 @@ var Config = Configuration{
 	DaysToKeep:   60,
 	MonthsToKeep: 6,
 	YearsToKeep:  2,
+	ResetOnStart: false,
 	Debug:        false,
 }
 
