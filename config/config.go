@@ -19,9 +19,9 @@ type Configuration struct {
 var Config = Configuration{
 	DbDir:        "/var/lib/v2stat",
 	ServerAddr:   "127.0.0.1:10085",
-	DaysToKeep:   60,
-	MonthsToKeep: 6,
-	YearsToKeep:  2,
+	DaysToKeep:   7,
+	MonthsToKeep: 2,
+	YearsToKeep:  3,
 	ResetOnStart: false,
 	Debug:        false,
 }
