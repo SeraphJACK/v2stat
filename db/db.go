@@ -128,7 +128,7 @@ func QueryDaySum(month time.Time) []Record {
 	end := time.Date(month.Year(), month.Month()+1, 1, 24, 0, 0, 0, month.Location())
 	ret := make([]Record, 0)
 	rows, err := db.Query(
-		"SELECT u.name, d.rx, d.tx\nFROM user u\n         INNER JOIN day d ON d.user = u.id\nWHERE d.date >= ?\n  AND d.date < ?\n",
+		"SELECT u.name, SUM(d.rx), SUM(d.tx)\nFROM user u\n         INNER JOIN day d ON d.user = u.id\nWHERE d.date >= ?\n  AND d.date < ?\nGROUP BY u.name\n",
 		begin,
 		end,
 	)
