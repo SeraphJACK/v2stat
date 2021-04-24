@@ -5,28 +5,11 @@ import (
 	"fmt"
 	"github.com/SeraphJACK/v2stat/config"
 	"github.com/SeraphJACK/v2stat/db"
+	"github.com/SeraphJACK/v2stat/util"
 	"os"
 	"strconv"
 	"time"
 )
-
-var units = map[int]string{
-	0: "B",
-	1: "KiB",
-	2: "MiB",
-	3: "GiB",
-	4: "TiB",
-}
-
-func formatTraffic(traffic int64) string {
-	unit := 0
-	num := float64(traffic)
-	for unit <= 3 && num >= 1000 {
-		unit++
-		num /= 1024
-	}
-	return strconv.FormatFloat(num, 'f', 2, 64) + " " + units[unit]
-}
 
 func printRecords(title string, records []db.Record) {
 	fmt.Printf("Traffics for %s :\n", title)
@@ -40,11 +23,21 @@ func printRecords(title string, records []db.Record) {
 	for _, v := range records {
 		sumRx += v.Rx
 		sumTx += v.Tx
-		fmt.Printf("    %-15v / %-10v / %-10v\n", v.User, formatTraffic(v.Rx), formatTraffic(v.Tx))
+		fmt.Printf(
+			"    %-15v / %-10v / %-10v\n",
+			v.User,
+			util.FormatTraffic(v.Rx),
+			util.FormatTraffic(v.Tx),
+		)
 	}
 	fmt.Print("\n")
 
-	fmt.Printf("    Sum rx: %s, tx: %s, total: %s\n", formatTraffic(sumRx), formatTraffic(sumTx), formatTraffic(sumRx+sumTx))
+	fmt.Printf(
+		"    Sum rx: %s, tx: %s, total: %s\n",
+		util.FormatTraffic(sumRx),
+		util.FormatTraffic(sumTx),
+		util.FormatTraffic(sumRx+sumTx),
+	)
 
 	fmt.Print("\n")
 }

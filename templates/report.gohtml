@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>V2Stat Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.1.0/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="header-box">
+    <div class="right">
+        <h4>
+            <span>Last updated: </span>
+            <span>{{.Date}}</span>
+        </h4>
+    </div>
+</div>
+<div class="general-box">
+    <h4>Overall Statistics This Month</h4>
+    <div class="general-items">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="grid-module">
+                    <div class="col-title">Total Traffic</div>
+                    <span>{{.TotalTraffic}}</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="grid-module">
+                    <div class="col-title">Total Rx.</div>
+                    <span>{{.TotalRx}}</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="grid-module">
+                    <div class="col-title">Total Tx.</div>
+                    <span>{{.TotalTx}}</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="grid-module">
+                    <div class="col-title">Users</div>
+                    <span>{{.UserCount}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panels">
+    <div class="row" style="height: 400px">
+        <div class="col-md-6">
+            <div id="last-week-total-chart" style="width: 100%; height: 100%"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="month-user-traffics-chart" style="width: 100%; height: 100%"></div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var lastWeekChart = echarts.init(document.getElementById("last-week-total-chart"));
+    lastWeekChart.setOption({
+        title: {
+            text: "Traffics last 7 days"
+        },
+        tooltip: {
+            trigger: 'axis',
+            formatter: tooltipFormat
+        },
+        legend: {},
+        xAxis: {type: "category"},
+        yAxis: {
+            axisLabel: {
+                formatter: format
+            }
+        },
+        dataset: {
+            dimensions: ['date', 'rx', 'tx'],
+            source: [
+                {{ range .LastWeekRecords }}
+                {date: "{{.Date}}" , rx: {{.Rx}}, tx: {{.Tx}} },
+                {{ end }}
+            ]
+        },
+        series: [
+            {type: "line", smooth: true},
+            {type: "line", smooth: true}
+        ]
+    });
+
+    function tooltipFormat(params, ticket, callback) {
+        var rx = format(params[0].value.rx);
+        var tx = format(params[0].value.tx);
+        // TODO beautify
+        callback(ticket, params[0].value.date + "<br/>" + "Rx: " + rx + "<br/>" + "Tx: " + tx);
+    }
+
+    function format(value) {
+        var unitsSuffixes = ["B", "KiB", "MiB", "GiB", "TiB"];
+        var unit = 0;
+        while (unit < 4 && value >= 1000) {
+            value /= 1024;
+            unit++;
+        }
+        var s = value.toString();
+        var i = s.indexOf(".");
+        return s.substr(0, i>0 ? i+2 : s.length) + " " + unitsSuffixes[unit];
+    }
+</script>
+<style>
+
+</style>
+</html>

@@ -215,6 +215,12 @@ func CleanMonthRecords(before time.Time) {
 	}
 }
 
+func UserCount() int {
+	var ret int
+	_ = db.QueryRow("SELECT count(id) FROM user").Scan(&ret)
+	return ret
+}
+
 func Close() error {
 	return db.Close()
 }
