@@ -7,52 +7,55 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
 </head>
 <body>
-<div class="header-box">
-    <div class="right">
-        <h4>
-            <span>Last updated: </span>
-            <span>{{.Date}}</span>
-        </h4>
+<div class="container-fluid">
+
+    <div class="header-box">
+        <div class="right">
+            <h4>
+                <span>Last updated: </span>
+                <span class="pull-right">{{.Date}}</span>
+            </h4>
+        </div>
     </div>
-</div>
-<div class="general-box">
-    <h4>Overall Statistics This Month</h4>
-    <div class="general-items">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="grid-module">
-                    <div class="col-title">Total Traffic</div>
-                    <span>{{.TotalTraffic}}</span>
+    <div class="general-box">
+        <h4>Overall Statistics This Month</h4>
+        <div class="general-items">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="grid-module">
+                        <div class="col-title">Total Traffic</div>
+                        <span class="grid-val">{{.TotalTraffic}}</span>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="grid-module">
-                    <div class="col-title">Total Rx.</div>
-                    <span>{{.TotalRx}}</span>
+                <div class="col-md-3">
+                    <div class="grid-module">
+                        <div class="col-title">Total Rx.</div>
+                        <span class="grid-val">{{.TotalRx}}</span>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="grid-module">
-                    <div class="col-title">Total Tx.</div>
-                    <span>{{.TotalTx}}</span>
+                <div class="col-md-3">
+                    <div class="grid-module">
+                        <div class="col-title">Total Tx.</div>
+                        <span class="grid-val">{{.TotalTx}}</span>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="grid-module">
-                    <div class="col-title">Users</div>
-                    <span>{{.UserCount}}</span>
+                <div class="col-md-3">
+                    <div class="grid-module">
+                        <div class="col-title">Users</div>
+                        <span class="grid-val">{{.UserCount}}</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div class="panels">
-    <div class="row" style="height: 400px">
-        <div class="col-md-6">
-            <div id="last-week-total-chart" style="width: 100%; height: 100%"></div>
-        </div>
-        <div class="col-md-6">
-            <div id="last-week-user-chart" style="width: 100%; height: 100%"></div>
+    <div class="panels">
+        <div class="row" style="height: 400px">
+            <div class="col-md-6">
+                <div id="last-week-total-chart" style="width: 100%; height: 100%"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="last-week-user-chart" style="width: 100%; height: 100%"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -144,6 +147,37 @@
     }
 </script>
 <style>
+    body {
+        background: #f6f2f2;
+    }
 
+    * {
+        box-sizing: border-box;
+    }
+
+    .pull-right {
+        float: right !important;
+    }
+
+    .grid-module {
+        margin-top: 5px;
+        padding: 7px;
+        background: #dadde6;
+        border-top: 4px solid #888787;
+    }
+
+    .panels {
+        padding-top: 10px;
+    }
+
+    .grid-module .col-title {
+        font-size: 85%;
+        color: #545454;
+    }
+
+    .grid-val {
+        font-weight: bold;
+        font-size: 25px;
+    }
 </style>
 </html>
