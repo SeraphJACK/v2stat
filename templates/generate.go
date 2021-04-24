@@ -15,6 +15,12 @@ type dayRecord struct {
 	Tx   int64
 }
 
+type userRecord struct {
+	User string
+	Rx   int64
+	Tx   int64
+}
+
 type templateData struct {
 	Date            string
 	TotalTraffic    string
@@ -22,6 +28,7 @@ type templateData struct {
 	TotalTx         string
 	UserCount       string
 	LastWeekRecords []dayRecord
+	UserRecords     []userRecord
 }
 
 func Generate(w io.Writer) error {
@@ -48,6 +55,27 @@ func Generate(w io.Writer) error {
 	}
 	data.LastWeekRecords = append(data.LastWeekRecords,
 		calcSum(db.QueryHourSum(util.Today()), util.Today().Format("2006-01-02")))
+
+	rec := make(map[string]userRecord)
+	for i := -7; i < 0; i++ {
+		t := util.Day(i)
+		for _, v := range db.QueryDay(t) {
+			r := rec[v.User]
+			r.Rx += v.Rx
+			r.Tx += v.Tx
+			rec[v.User] = r
+		}
+	}
+	for _, v := range db.QueryHourSum(util.Today()) {
+		r := rec[v.User]
+		r.Rx += v.Rx
+		r.Tx += v.Tx
+		rec[v.User] = r
+	}
+	for k, v := range rec {
+		v.User = k
+		data.UserRecords = append(data.UserRecords, v)
+	}
 
 	tmp := template.Must(template.ParseFiles("report.gohtml"))
 	return tmp.Execute(w, data)

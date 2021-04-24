@@ -52,7 +52,7 @@
             <div id="last-week-total-chart" style="width: 100%; height: 100%"></div>
         </div>
         <div class="col-md-6">
-            <div id="month-user-traffics-chart" style="width: 100%; height: 100%"></div>
+            <div id="last-week-user-chart" style="width: 100%; height: 100%"></div>
         </div>
     </div>
 </div>
@@ -65,7 +65,7 @@
         },
         tooltip: {
             trigger: 'axis',
-            formatter: tooltipFormat
+            formatter: tooltipFormatTraffic
         },
         legend: {},
         xAxis: {type: "category"},
@@ -78,7 +78,7 @@
             dimensions: ['date', 'rx', 'tx'],
             source: [
                 {{ range .LastWeekRecords }}
-                {date: "{{.Date}}" , rx: {{.Rx}}, tx: {{.Tx}} },
+                {date: "{{.Date}}", rx: {{.Rx}}, tx: {{.Tx}} },
                 {{ end }}
             ]
         },
@@ -87,12 +87,48 @@
             {type: "line", smooth: true}
         ]
     });
+    var userChart = echarts.init(document.getElementById("last-week-user-chart"));
+    userChart.setOption({
+        title: {
+            text: "Traffics last 7 days"
+        },
+        tooltip: {
+            trigger: 'axis',
+            formatter: tooltipFormatUser
+        },
+        legend: {},
+        xAxis: {type: "category"},
+        yAxis: {
+            axisLabel: {
+                formatter: format
+            }
+        },
+        dataset: {
+            dimensions: ['user', 'rx', 'tx'],
+            source: [
+                {{ range .UserRecords }}
+                {user: "{{.User}}", rx: {{.Rx}}, tx: {{.Tx}} },
+                {{ end }}
+            ]
+        },
+        series: [
+            {type: "bar"},
+            {type: "bar"}
+        ]
+    });
 
-    function tooltipFormat(params, ticket, callback) {
+    function tooltipFormatTraffic(params, ticket, callback) {
         var rx = format(params[0].value.rx);
         var tx = format(params[0].value.tx);
         // TODO beautify
         callback(ticket, params[0].value.date + "<br/>" + "Rx: " + rx + "<br/>" + "Tx: " + tx);
+    }
+
+    function tooltipFormatUser(params, ticket, callback) {
+        var rx = format(params[0].value.rx);
+        var tx = format(params[0].value.tx);
+        // TODO beautify
+        callback(ticket, params[0].value.user + "<br/>" + "Rx: " + rx + "<br/>" + "Tx: " + tx);
     }
 
     function format(value) {
@@ -104,7 +140,7 @@
         }
         var s = value.toString();
         var i = s.indexOf(".");
-        return s.substr(0, i>0 ? i+2 : s.length) + " " + unitsSuffixes[unit];
+        return s.substr(0, i > 0 ? i + 2 : s.length) + " " + unitsSuffixes[unit];
     }
 </script>
 <style>
