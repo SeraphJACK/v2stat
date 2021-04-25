@@ -88,7 +88,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	for _, cmd := range os.Args {
+	for _, cmd := range os.Args[1:] {
 		if strings.HasPrefix(cmd, "-") {
 			continue
 		}
