@@ -69,6 +69,14 @@
                 <div class="panel-item" id="last-week-user-chart" style="width: 100%; height: 100%"></div>
             </div>
         </div>
+        <div class="row" style="height: 400px">
+            <div class="col-md-6">
+                <div class="panel-item" id="this-month-user-chart" style="width: 100%; height: 100%"></div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel-item" id="last-month-user-chart" style="width: 100%; height: 100%"></div>
+            </div>
+        </div>
     </div>
 </div>
 </body>
@@ -132,6 +140,66 @@
         ]
     });
 
+    var monthlyUserChart = echarts.init(document.getElementById("this-month-user-chart"));
+    monthlyUserChart.setOption({
+        title: {
+            text: "Traffics this month"
+        },
+        tooltip: {
+            trigger: 'axis',
+            formatter: tooltipFormatUser
+        },
+        legend: {},
+        xAxis: {type: "category"},
+        yAxis: {
+            axisLabel: {
+                formatter: format
+            }
+        },
+        dataset: {
+            dimensions: ['user', 'rx', 'tx'],
+            source: [
+                {{ range .MonthlyUserRecords }}
+                {user: "{{.User}}", rx: {{.Rx}}, tx: {{.Tx}} },
+                {{ end }}
+            ]
+        },
+        series: [
+            {type: "bar"},
+            {type: "bar"}
+        ]
+    });
+
+    var lastMonthUserChart = echarts.init(document.getElementById("last-month-user-chart"));
+    lastMonthUserChart.setOption({
+        title: {
+            text: "Traffics last month"
+        },
+        tooltip: {
+            trigger: 'axis',
+            formatter: tooltipFormatUser
+        },
+        legend: {},
+        xAxis: {type: "category"},
+        yAxis: {
+            axisLabel: {
+                formatter: format
+            }
+        },
+        dataset: {
+            dimensions: ['user', 'rx', 'tx'],
+            source: [
+                {{ range .LastMonthUserRecords }}
+                {user: "{{.User}}", rx: {{.Rx}}, tx: {{.Tx}} },
+                {{ end }}
+            ]
+        },
+        series: [
+            {type: "bar"},
+            {type: "bar"}
+        ]
+    });
+
     function tooltipFormatTraffic(params, ticket, callback) {
         var rx = format(params[0].value.rx);
         var tx = format(params[0].value.tx);
@@ -182,6 +250,10 @@
         margin-top: 20px;
     }
 
+    .panels .row {
+        margin-top: 20px;
+    }
+
     .grid-module .col-title {
         font-size: 85%;
         color: #545454;
@@ -194,7 +266,7 @@
 
     .update-time {
         font-size: 80%;
-        font-weight: normal !important;
+        font-weight: bold !important;
     }
 
     .panel-item {
