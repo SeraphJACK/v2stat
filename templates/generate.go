@@ -22,13 +22,14 @@ type userRecord struct {
 }
 
 type templateData struct {
-	Date            string
-	TotalTraffic    string
-	TotalRx         string
-	TotalTx         string
-	UserCount       string
-	LastWeekRecords []dayRecord
-	UserRecords     []userRecord
+	Date             string
+	TotalTraffic     string
+	TotalRx          string
+	TotalTx          string
+	UserCount        string
+	TrafficLastMonth string
+	LastWeekRecords  []dayRecord
+	UserRecords      []userRecord
 }
 
 func Generate(w io.Writer) error {
@@ -76,6 +77,19 @@ func Generate(w io.Writer) error {
 		v.User = k
 		data.UserRecords = append(data.UserRecords, v)
 	}
+
+	now := time.Now()
+	lastMonth := time.Date(now.Year(), now.Month()-1, 1, 0, 0, 0, 0, now.Location())
+
+	totalRx = 0
+	totalTx = 0
+
+	for _, v := range db.QueryMonth(lastMonth) {
+		totalRx += v.Rx
+		totalTx += v.Tx
+	}
+
+	data.TrafficLastMonth = util.FormatTraffic(totalRx + totalTx)
 
 	tmp := template.Must(template.ParseFiles("report.gohtml"))
 	return tmp.Execute(w, data)
