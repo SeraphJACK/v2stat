@@ -95,13 +95,16 @@ func main() {
 		if cmd == "genreport" {
 			file, err := os.Create(*htmlOutputPath)
 			if err != nil {
-				_, _ = fmt.Fprintf(os.Stderr, "Failed to write report: %s\n", err)
+				_, _ = fmt.Fprintf(os.Stderr, "Failed to write report: %v\n", err)
 			}
 			err = Generate(file)
 			if err != nil {
-				_, _ = fmt.Fprintf(os.Stderr, "Failed to generate report: %s\n", err)
+				_, _ = fmt.Fprintf(os.Stderr, "Failed to generate report: %v\n", err)
 			}
-			_ = file.Close()
+			err = file.Close()
+			if err != nil {
+				_, _ = fmt.Fprintf(os.Stderr, "Failed to close file: %v\n", err)
+			}
 			os.Exit(0)
 		} else {
 			_, _ = fmt.Fprintf(os.Stderr, "Unkonwn command: %s\n", cmd)
