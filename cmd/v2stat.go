@@ -6,6 +6,7 @@ import (
 	"github.com/SeraphJACK/v2stat/config"
 	"github.com/SeraphJACK/v2stat/db"
 	"github.com/SeraphJACK/v2stat/util"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -93,6 +94,7 @@ func main() {
 			continue
 		}
 		if cmd == "genreport" {
+			log.Printf("Writing report to %s...\n", *htmlOutputPath)
 			file, err := os.Create(*htmlOutputPath)
 			if err != nil {
 				_, _ = fmt.Fprintf(os.Stderr, "Failed to write report: %v\n", err)
