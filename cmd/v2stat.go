@@ -89,8 +89,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	skip := false
 	for _, cmd := range os.Args[1:] {
+		if skip {
+			skip = false
+			continue
+		}
 		if strings.HasPrefix(cmd, "-") {
+			skip = !strings.Contains(cmd, "=")
 			continue
 		}
 		if cmd == "genreport" {
