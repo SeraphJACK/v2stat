@@ -4,6 +4,7 @@ import (
 	"github.com/SeraphJACK/v2stat/db"
 	"github.com/SeraphJACK/v2stat/util"
 	"io"
+	"sort"
 	"strconv"
 	"text/template"
 	"time"
@@ -109,8 +110,20 @@ func Generate(w io.Writer) error {
 		})
 	}
 
+	sortRecord(data.UserRecords)
+	sortRecord(data.MonthlyUserRecords)
+	sortRecord(data.LastMonthUserRecords)
+
 	tmp := template.Must(template.New("report").Parse(string(MustAsset("templates/report.gohtml"))))
 	return tmp.Execute(w, data)
+}
+
+func sortRecord(slice []userRecord) {
+	sort.Slice(slice, func(i, j int) bool {
+		a := slice[i]
+		b := slice[j]
+		return a.Rx+a.Tx > b.Rx+b.Tx
+	})
 }
 
 func calcSum(records []db.Record, date string) dayRecord {
