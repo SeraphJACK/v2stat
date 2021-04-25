@@ -1,4 +1,4 @@
-package templates
+package main
 
 import (
 	"github.com/SeraphJACK/v2stat/db"
@@ -109,7 +109,7 @@ func Generate(w io.Writer) error {
 		})
 	}
 
-	tmp := template.Must(template.ParseFiles("report.gohtml"))
+	tmp := template.Must(template.New("report").Parse(string(MustAsset("templates/report.gohtml"))))
 	return tmp.Execute(w, data)
 }
 

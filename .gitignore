@@ -1,4 +1,4 @@
 .idea/
 test.db
 v2stat.db
-templates/test.html
+cmd/test.html

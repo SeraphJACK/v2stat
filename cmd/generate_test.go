@@ -1,4 +1,4 @@
-package templates
+package main
 
 import (
 	"github.com/SeraphJACK/v2stat/config"
