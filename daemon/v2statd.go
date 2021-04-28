@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"runtime/debug"
 	"strings"
 	"syscall"
 	"time"
@@ -128,6 +129,14 @@ func main() {
 	}
 
 	c.Start()
+
+	go func() {
+		t := time.Tick(time.Hour)
+		for {
+			<-t
+			debug.FreeOSMemory()
+		}
+	}()
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan)
