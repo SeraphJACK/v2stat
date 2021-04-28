@@ -3,7 +3,15 @@ package main
 import (
 	"github.com/SeraphJACK/v2stat/db"
 	"github.com/SeraphJACK/v2stat/util"
+	"github.com/tdewolff/minify"
+	"github.com/tdewolff/minify/css"
+	"github.com/tdewolff/minify/html"
+	"github.com/tdewolff/minify/js"
+	"github.com/tdewolff/minify/json"
+	"github.com/tdewolff/minify/svg"
+	"github.com/tdewolff/minify/xml"
 	"io"
+	"regexp"
 	"sort"
 	"strconv"
 	"text/template"
@@ -114,8 +122,20 @@ func Generate(w io.Writer) error {
 	sortRecord(data.MonthlyUserRecords)
 	sortRecord(data.LastMonthUserRecords)
 
+	m := minify.New()
+	m.AddFunc("text/css", css.Minify)
+	m.AddFunc("text/html", html.Minify)
+	m.AddFunc("image/svg+xml", svg.Minify)
+	m.AddFuncRegexp(regexp.MustCompile("^(application|text)/(x-)?(java|ecma)script$"), js.Minify)
+	m.AddFuncRegexp(regexp.MustCompile("[/+]json$"), json.Minify)
+	m.AddFuncRegexp(regexp.MustCompile("[/+]xml$"), xml.Minify)
 	tmp := template.Must(template.New("report").Parse(string(MustAsset("templates/report.gohtml"))))
-	return tmp.Execute(w, data)
+	mw := m.Writer("text/html", w)
+	err := tmp.Execute(mw, data)
+	if err != nil {
+		return err
+	}
+	return mw.Close()
 }
 
 func sortRecord(slice []userRecord) {
