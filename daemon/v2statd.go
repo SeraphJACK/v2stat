@@ -4,7 +4,7 @@ import (
 	"github.com/SeraphJACK/v2stat/config"
 	"github.com/SeraphJACK/v2stat/db"
 	"github.com/SeraphJACK/v2stat/util"
-	"github.com/robfig/cron/v3"
+	"github.com/go-co-op/gocron"
 	"log"
 	"os"
 	"os/signal"
@@ -90,14 +90,14 @@ func main() {
 		}
 	}
 
-	c := cron.New()
+	s := gocron.NewScheduler(time.Local)
 
-	_, err = c.AddFunc("0 * * * *", DoRecord)
+	_, err = s.Cron("0 * * * *").Do(DoRecord)
 	if err != nil {
 		panic(err)
 	}
 
-	_, err = c.AddFunc("1 0 * * *", func() {
+	_, err = s.Cron("1 0 * * *").Do(func() {
 		now := time.Now()
 		err := db.SumDay(now)
 		if err != nil {
@@ -112,7 +112,7 @@ func main() {
 		panic(err)
 	}
 
-	_, err = c.AddFunc("2 0 1 * *", func() {
+	_, err = s.Cron("2 0 1 * *").Do(func() {
 		now := time.Now()
 		err := db.SumMonth(now)
 		if err != nil {
@@ -127,7 +127,7 @@ func main() {
 		panic(err)
 	}
 
-	c.Start()
+	s.StartAsync()
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan)
@@ -141,8 +141,7 @@ func main() {
 				log.Printf("Failed to reload configuration: %v\n", err)
 			}
 		} else if sig == syscall.SIGTERM || sig == syscall.SIGINT || sig == syscall.SIGQUIT {
-			// Wait all jobs to terminate
-			<-c.Stop().Done()
+			s.Stop()
 			err := db.Close()
 			if err != nil {
 				log.Printf("Failed to close db connection: %v\n", err)
