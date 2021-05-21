@@ -8,6 +8,8 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"runtime"
+	"runtime/pprof"
 	"strings"
 	"syscall"
 	"time"
@@ -70,6 +72,20 @@ func DoRecord() {
 	// Clean hour records
 	before := time.Date(now.Year(), now.Month(), now.Day()-config.Config.DaysToKeep, 0, 0, 0, 0, now.Location())
 	db.CleanHoursRecord(before)
+
+	// Generate memory report
+	if config.Config.Debug {
+		f, err := os.Create(config.Config.MemProfilePath)
+		if err != nil {
+			log.Printf("Failed to create mem profile file: %v\n", err)
+			return
+		}
+		defer f.Close()
+		runtime.GC()
+		if err := pprof.WriteHeapProfile(f); err != nil {
+			log.Printf("Failed to create heap profile: %v\n", err)
+		}
+	}
 }
 
 func main() {

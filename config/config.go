@@ -7,23 +7,25 @@ import (
 )
 
 type Configuration struct {
-	DbDir        string `yaml:"db_dir"`
-	ServerAddr   string `yaml:"server_addr"`
-	DaysToKeep   int    `yaml:"days_to_keep"`
-	MonthsToKeep int    `yaml:"months_to_keep"`
-	YearsToKeep  int    `yaml:"years_to_keep"`
-	ResetOnStart bool   `yaml:"reset_on_start"`
-	Debug        bool   `yaml:"debug"`
+	DbDir          string `yaml:"db_dir"`
+	ServerAddr     string `yaml:"server_addr"`
+	DaysToKeep     int    `yaml:"days_to_keep"`
+	MonthsToKeep   int    `yaml:"months_to_keep"`
+	YearsToKeep    int    `yaml:"years_to_keep"`
+	ResetOnStart   bool   `yaml:"reset_on_start"`
+	Debug          bool   `yaml:"debug"`
+	MemProfilePath string `yaml:"mem_profile_path"`
 }
 
 var Config = Configuration{
-	DbDir:        "/var/lib/v2stat",
-	ServerAddr:   "127.0.0.1:10085",
-	DaysToKeep:   7,
-	MonthsToKeep: 2,
-	YearsToKeep:  3,
-	ResetOnStart: false,
-	Debug:        false,
+	DbDir:          "/var/lib/v2stat",
+	ServerAddr:     "127.0.0.1:10085",
+	DaysToKeep:     7,
+	MonthsToKeep:   2,
+	YearsToKeep:    3,
+	ResetOnStart:   false,
+	Debug:          false,
+	MemProfilePath: "/var/lib/v2stat/mem.prof",
 }
 
 var confPath = flag.String("conf", "/etc/v2stat.yaml", "Path to the config file")
