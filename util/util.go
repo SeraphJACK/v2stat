@@ -16,6 +16,7 @@ func QueryStats(addr string, pattern string, reset bool) (*pb.QueryStatsResponse
 	if err != nil {
 		return nil, err
 	}
+	defer conn.Close()
 	return queryStats(ctx, conn, pattern, reset)
 }
 
