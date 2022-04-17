@@ -21,6 +21,7 @@ func printRecords(title string, records []db.Record) {
 	}
 	fmt.Printf("    ----------------+------------+------------\n")
 	fmt.Printf("    %-15v | %-10v | %-10v\n", "user", "rx", "tx")
+	fmt.Printf("    ----------------+------------+------------\n")
 	sumRx := int64(0)
 	sumTx := int64(0)
 	for _, v := range records {
@@ -33,6 +34,7 @@ func printRecords(title string, records []db.Record) {
 			util.FormatTraffic(v.Tx),
 		)
 	}
+	fmt.Printf("    ----------------+------------+------------\n")
 	fmt.Print("\n")
 
 	fmt.Printf(
