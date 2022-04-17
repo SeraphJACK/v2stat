@@ -19,14 +19,14 @@ func printRecords(title string, records []db.Record) {
 		fmt.Print("    not available\n\n")
 		return
 	}
-	fmt.Printf("    %-15v / %-10v / %-10v\n", "user", "rx", "tx")
+	fmt.Printf("    %-15v | %-10v | %-10v\n", "user", "rx", "tx")
 	sumRx := int64(0)
 	sumTx := int64(0)
 	for _, v := range records {
 		sumRx += v.Rx
 		sumTx += v.Tx
 		fmt.Printf(
-			"    %-15v / %-10v / %-10v\n",
+			"    %-15v | %-10v | %-10v\n",
 			v.User,
 			util.FormatTraffic(v.Rx),
 			util.FormatTraffic(v.Tx),
@@ -60,7 +60,7 @@ func cliStats(prevDays, prevMonths int, showToday, showThisMonth bool) {
 
 	for i := prevDays; i > 0; i-- {
 		t := time.Date(now.Year(), now.Month(), now.Day()-i, 0, 0, 0, 0, now.Location())
-		title := strconv.Itoa(t.Day()) + "/" + strconv.Itoa(int(t.Month())) + "/" + strconv.Itoa(t.Year())
+		title := strconv.Itoa(t.Day()) + "|" + strconv.Itoa(int(t.Month())) + "|" + strconv.Itoa(t.Year())
 		printRecords(title, db.QueryDay(t))
 	}
 
