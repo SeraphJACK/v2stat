@@ -19,7 +19,7 @@ func printRecords(title string, records []db.Record) {
 		fmt.Print("    not available\n\n")
 		return
 	}
-	fmt.Printf("----------------+------------+------------\n")
+	fmt.Printf("    ----------------+------------+------------\n")
 	fmt.Printf("    %-15v | %-10v | %-10v\n", "user", "rx", "tx")
 	sumRx := int64(0)
 	sumTx := int64(0)
